@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--File includes-->
+  <xacro:include filename="$(find tiago_description)/urdf/deg_to_rad.xacro" />
+
+  <!--Constant parameters-->
+  <xacro:property name="cl" value="0.05" /> <!-- cylinder length -->
+  <xacro:property name="cr" value="0.005" /> <!-- cylinder radius -->
+  <xacro:property name="w"  value="0.005"/> <!-- width -->
+  <xacro:property name="d"  value="0.03" /> <!-- distance between fingers -->
+  <xacro:property name="fl" value="0.05" /> <!-- finger length -->
+
+  <xacro:macro name="geom_cylinder">
+    <origin rpy="0 ${-90 * deg_to_rad} 0" xyz="${cl / 2} 0 0" />
+    <geometry>
+      <cylinder radius="${cr}" length="${cl}" />
+    </geometry>
+  </xacro:macro>
+  <xacro:macro name="geom_finger_base">
+    <!--<origin xyz="${cl + w / 2} 0 0" />-->
+    <origin xyz="${w / 2} 0 0" />
+    <geometry>
+      <box size="${w} ${2 * w  + d} ${2*cr}" />
+    </geometry>
+  </xacro:macro>
+  <xacro:macro name="geom_finger_left">
+    <!--<origin xyz="${cl + w + fl / 2} ${(d + w) / 2} 0" />-->
+    <origin xyz="${fl/2} ${w/2} 0" />
+    <geometry>
+      <box size="${fl} ${w} ${2*cr}" />
+    </geometry>
+  </xacro:macro>
+  <xacro:macro name="geom_finger_right">
+    <!--<origin xyz="${cl + w + fl / 2} -${(d + w) / 2} 0" />-->
+    <origin xyz="${fl/2} ${-w/2} 0" />
+    <geometry>
+      <box size="${fl} ${w} ${2*cr}" />
+    </geometry>
+  </xacro:macro>
+
+  <xacro:macro name="empty_inertial">
+    <inertial>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0.0" izz="0.001" />
+      <mass value="0.01" />
+      <origin rpy="0.0 0.0 0.0" xyz="0 0 0" />
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="link_cylinder" params="name">
+    <link name="${name}">
+      <xacro:empty_inertial/>
+      <collision>
+        <xacro:geom_cylinder/>
+      </collision>
+      <visual>
+        <xacro:geom_cylinder/>
+        <material name="White"/>
+      </visual>
+    </link>
+  </xacro:macro>
+  <xacro:macro name="link_finger_base" params="name">
+    <link name="${name}">
+      <xacro:empty_inertial/>
+      <collision>
+        <xacro:geom_finger_base/>
+      </collision>
+      <visual>
+        <xacro:geom_finger_base/>
+        <material name="White"/>
+      </visual>
+    </link>
+  </xacro:macro>
+  <xacro:macro name="link_finger_right" params="name">
+    <link name="${name}">
+      <xacro:empty_inertial/>
+      <collision>
+        <xacro:geom_finger_right/>
+      </collision>
+      <visual>
+        <xacro:geom_finger_right/>
+        <material name="White"/>
+      </visual>
+    </link>
+  </xacro:macro>
+  <xacro:macro name="link_finger_left" params="name">
+    <link name="${name}">
+      <xacro:empty_inertial/>
+      <collision>
+        <xacro:geom_finger_left/>
+      </collision>
+      <visual>
+        <xacro:geom_finger_left/>
+        <material name="White"/>
+      </visual>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="airbus_tool" params="name parent">
+
+    <xacro:link_cylinder     name="${name}_0_link"/>
+    <xacro:link_finger_base  name="${name}_1_link"/>
+    <xacro:link_finger_left  name="${name}_l_link"/>
+    <xacro:link_finger_right name="${name}_r_link"/>
+
+    <link name="${name}_link"/>
+
+    <joint name="${name}_0_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <parent link="${parent}" />
+      <child link="${name}_0_link" />
+    </joint>
+
+    <joint name="${name}_1_joint" type="revolute">
+      <origin rpy="0 0 0" xyz="${cl} 0 0" />
+      <parent link="${name}_0_link" />
+      <child  link="${name}_1_link" />
+      <axis xyz="0 1 0" />
+      <limit lower="${- 90 * deg_to_rad}" upper="${90 * deg_to_rad}" effort="1" velocity="1"/>
+    </joint>
+
+    <joint name="${name}_l_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="${w} ${d/2} 0" />
+      <parent link="${name}_1_link" />
+      <child  link="${name}_l_link" />
+    </joint>
+
+    <joint name="${name}_r_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="${w} ${-d/2} 0" />
+      <parent link="${name}_1_link" />
+      <child  link="${name}_r_link" />
+    </joint>
+
+    <joint name="${name}_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="${w + fl} 0 0" />
+      <parent link="${name}_1_link" />
+      <child  link="${name}_link" />
+    </joint>
+
+  </xacro:macro>
+</robot>
