@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+# Copyright (c) 2018 CNRS
+# Author: Joseph Mirabel
+#
+# This file is part of hpp_tiago.
+# hpp_tiago is free software: you can redistribute it
+# and/or modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation, either version
+# 3 of the License, or (at your option) any later version.
+#
+# hpp_tiago is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Lesser Public License for more details.  You should have
+# received a copy of the GNU Lesser General Public License along with
+# hpp_tiago.  If not, see
+# <http://www.gnu.org/licenses/>.
+
 from hpp.corbaserver.manipulation.robot import Robot as _Parent
 
 class Robot (_Parent):
