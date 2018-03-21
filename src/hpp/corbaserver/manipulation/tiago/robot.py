@@ -34,8 +34,10 @@ class Robot (_Parent):
         from math import pi
         q[self.rankInConfiguration[self.tiagoName + "/torso_lift_joint"]] = 0
         q[self.rankInConfiguration[self.tiagoName + "/arm_1_joint"]] = 0
-        q[self.rankInConfiguration[self.tiagoName + "/arm_2_joint"]] = - pi / 2
-        q[self.rankInConfiguration[self.tiagoName + "/arm_3_joint"]] = - pi / 2
+        q[self.rankInConfiguration[self.tiagoName + "/arm_2_joint"]] = -pi/2+\
+                                                                       1e-4
+        q[self.rankInConfiguration[self.tiagoName + "/arm_3_joint"]] = -pi/2+\
+                                                                       1e-4
         q[self.rankInConfiguration[self.tiagoName + "/arm_4_joint"]] = 2.35619449019
         q[self.rankInConfiguration[self.tiagoName + "/arm_5_joint"]] = 0
         q[self.rankInConfiguration[self.tiagoName + "/arm_6_joint"]] = 0
