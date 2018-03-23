@@ -52,10 +52,22 @@ ADD_CUSTOM_COMMAND(
   LIST(APPEND ALL_GENERATED_URDF ${CMAKE_BINARY_DIR}/${XACRO_BASE})
 
 GENERATE_URDF_FILE(${CMAKE_SOURCE_DIR}/robots/tiago_airbus.urdf robots/tiago_airbus "urdf")
+
+# Generated reduced URDF
+ADD_CUSTOM_COMMAND (
+  OUTPUT ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf
+  COMMAND sed 's/continuous/fixed/'
+  ${CMAKE_BINARY_DIR}/robots/tiago_airbus.urdf >
+  ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf
+  MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/robots/tiago_airbus.urdf
+  COMMENT "Generating reduced URDF")
+
+ADD_CUSTOM_TARGET (generate_urdf_file ALL DEPENDS ${ALL_GENERATED_URDF}
+  ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf)
+
 INSTALL(FILES
   ${CMAKE_BINARY_DIR}/robots/tiago_airbus.urdf
+  ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf
   DESTINATION ${INSTALL_SHARE_DIR}/urdf)
-
-ADD_CUSTOM_TARGET (generate_urdf_file ALL DEPENDS ${ALL_GENERATED_URDF})
 
 SETUP_PROJECT_FINALIZE()
