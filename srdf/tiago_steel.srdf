@@ -1,7 +1,7 @@
 <robot name="tiago">
   <!-- gripper frame -->
   <gripper name="gripper" clearance="0.03" >
-    <position xyz="0.18 0 -0.02"
+    <position xyz="0.18 0 -0.025"
               wxyz="0.7071067811865476 -0.7071067811865476 0 0" />
     <link name="wrist_ft_tool_link" />
   </gripper>
