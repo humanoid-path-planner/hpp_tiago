@@ -13,7 +13,7 @@ SETUP_PROJECT()
 ADD_REQUIRED_DEPENDENCY(tiago_data)
 FINDPYTHON(REQUIRED)
 
-foreach(dir robots urdf srdf)
+foreach(dir urdf srdf)
     install(DIRECTORY ${dir}/
       DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/${dir})
 endforeach(dir)
