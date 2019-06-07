@@ -21,8 +21,8 @@ from hpp.corbaserver.robot import Robot as _Parent
 class Robot (_Parent):
     packageName = "hpp_tiago"
     urdfName = "tiago"
-    urdfSuffix = "_airbus"
-    srdfSuffix = "_airbus"
+    urdfSuffix = "_steel"
+    srdfSuffix = "_steel"
     rootJointType = "planar"
 
     def __init__ (self, robotName, load = True):
