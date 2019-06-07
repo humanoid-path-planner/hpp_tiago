@@ -1,11 +1,12 @@
 <robot name="tiago">
-
-  <gripper clearance="0.03" name="gripper">
-    <position wxyz="0.7071067811865476 -0.7071067811865476 0 0" xyz="0.18 0 -0.025" />
+  <!-- gripper frame -->
+  <gripper name="gripper" clearance="0.03" >
+    <position xyz="0.18 0 -0.02"
+              wxyz="0.7071067811865476 -0.7071067811865476 0 0" />
     <link name="wrist_ft_tool_link" />
   </gripper>
 
-
+  <!-- Collision pairs -->
 
   <disable_collisions link1="arm_3_link" link2="head_1_link" reason="User defined" />
   <disable_collisions link1="caster_front_left_2_link" link2="arm_2_link" reason="User defined" />
