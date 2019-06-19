@@ -26,7 +26,7 @@ INSTALL(FILES package.xml DESTINATION
 # Make symbolic link to tiago_steel.urdf installed by tiago_data
 INSTALL(CODE "execute_process( \
     COMMAND ${CMAKE_COMMAND} -E create_symlink \
-    ${TIAGO_DATA_DATAROOTDIR}/tiago_data/robots/tiago_steel.urdf \
+    ${TIAGO_DATA_PREFIX}/share/tiago_data/robots/tiago_steel.urdf \
     ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/urdf/tiago_steel.urdf   \
     )"
   )
