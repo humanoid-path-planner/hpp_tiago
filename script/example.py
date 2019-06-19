@@ -3,7 +3,7 @@ from numpy.linalg import norm
 from math import sqrt
 from hpp.corbaserver.manipulation import Client, ConstraintGraph, \
   ProblemSolver, Constraints
-from hpp.corbaserver.manipulation.tiago import Robot
+from manipulation.tiago import Robot
 from hpp.gepetto.manipulation import ViewerFactory
 from hpp.corbaserver import loadServerPlugin
 loadServerPlugin ("corbaserver", "manipulation-corba.so")
