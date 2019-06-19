@@ -38,6 +38,7 @@ ps = ProblemSolver (robot)
 vf = ViewerFactory (ps)
 
 q_foldedArm = [0.0, 0.0, 1.0, 0.0, # base
+     0., 0., # wheels
      0.15, # trunk
      0.20, -1.34, -0.20, 1.94, -1.57, 1.37, 0.0, # arm
      0.05, # gripper
@@ -50,6 +51,8 @@ vf.loadEnvironmentModel (Environment, 'staircases_koroibot')
 # Set bounds of mobile base
 robot.setJointBounds ('tiago/root_joint',
                       [-3.0, 4.0, -1.5, 3.0, -1.01, 1.01, -1.01, 1.01])
+robot.setJointBounds ('tiago/wheel_left_joint' , [-1e10, 1e10])
+robot.setJointBounds ('tiago/wheel_right_joint', [-1e10, 1e10])
 # Modify upper bound of gripper
 robot.setJointBounds ('tiago/gripper_finger_joint', [0.002, 0.050])
 
@@ -103,6 +106,13 @@ rank = robot.rankInConfiguration ['tiago/torso_lift_joint']
 ps.createLockedJoint ('locked-torso', 'tiago/torso_lift_joint',
                       q_foldedArm [rank: rank+1])
 
+# Create locked joint constraints for wheels
+lockedWheel = []
+for side in ["left", "right"]:
+    rk = robot.rankInConfiguration ['tiago/wheel_'+side+'_joint']
+    ps.createLockedJoint (side+'_wheel', 'tiago/wheel_'+side+'_joint', q_foldedArm [rk:rk+1])
+    lockedWheel.append (side+'_wheel')
+
 # Create locked joint constraints for gripper
 grId = robot.rankInConfiguration ['tiago/gripper_finger_joint']
 ps.createLockedJoint ('locked-gripper', 'tiago/gripper_finger_joint',
@@ -133,7 +143,7 @@ ps.createLockedJoint ('locked-box', 'box/root_joint', q1 [boxId: boxId+7])
 
 ps.resetConstraints ()
 ps.addLockedJointConstraints ('solver', ['locked-box', 'locked-gripper'] +\
-                              lockedHead)
+                              lockedHead + lockedWheel)
 ps.addNumericalConstraints ('solver', ['pg',])
 grasp_placement = list ()
 for i in range (100):
@@ -151,7 +161,7 @@ for i in range (100):
 ps.resetConstraints ()
 ps.addLockedJointConstraints ('solver', ['locked-box', 'locked-gripper',
                                          'locked-torso'] + lockedHead + \
-                              lockedArm)
+                              lockedArm + lockedWheel)
 # Remove useless collision pairs.
 ps.filterCollisionPairs ()
 goalConfigs = list ()
@@ -200,7 +210,7 @@ q_goal = grasp_placement [i]
 # Set fixed base constraint and object position
 ps.resetConstraints ()
 ps.addLockedJointConstraints ('solver', ['locked-tiago/root_joint',
-                                         'locked-box',])
+                                         'locked-box',] + lockedWheel)
 # Set parameter value for fixed base constraint
 ps.setRightHandSideFromConfig (q_init)
 
