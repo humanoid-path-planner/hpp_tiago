@@ -4,6 +4,7 @@
     <position xyz="0.18 0 -0.025"
               wxyz="0.7071067811865476 -0.7071067811865476 0 0" />
     <link name="wrist_ft_tool_link" />
+    <joint name="gripper_finger_joint" />
   </gripper>
 
   <!-- Collision pairs -->

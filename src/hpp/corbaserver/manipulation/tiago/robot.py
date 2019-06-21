@@ -24,8 +24,8 @@ class Robot (_Parent):
     urdfSuffix = "_steel"
     srdfSuffix = "_steel"
 
-    def __init__ (self, compositeName, name, rootjointtype, load = True):
-        super(Robot, self).__init__(compositeName, name, rootjointtype, load)
+    def __init__ (self, compositeName, name, rootJointType, load = True, **kwargs):
+        super(Robot, self).__init__(compositeName, name, rootJointType, load, **kwargs)
         self.tiagoName = name
 
     def homePosition(self,q=None):
