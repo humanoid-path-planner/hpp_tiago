@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 include(cmake/base.cmake)
-include(cmake/python.cmake)
+include(cmake/hpp.cmake)
+include(cmake/hpp/python.cmake)
 include(cmake-modules/xacro.cmake)
 
 SET(PROJECT_NAME "hpp_tiago")
 SET(PROJECT_DESCRIPTION "Additionnal files to use tiago in HPP")
-SET(PROJECT_URL "")
 
-SETUP_PROJECT()
+SETUP_HPP_PROJECT()
 
 ADD_REQUIRED_DEPENDENCY(tiago_data)
-FINDPYTHON(REQUIRED)
+HPP_FINDPYTHON(REQUIRED)
 
 foreach(dir urdf srdf)
     install(DIRECTORY ${dir}/
@@ -31,4 +31,4 @@ INSTALL(CODE "execute_process( \
     )"
   )
 
-SETUP_PROJECT_FINALIZE()
+SETUP_HPP_PROJECT_FINALIZE()
