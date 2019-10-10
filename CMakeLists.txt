@@ -1,73 +1,34 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 include(cmake/base.cmake)
-include(cmake/python.cmake)
+include(cmake/hpp.cmake)
+include(cmake/hpp/python.cmake)
 include(cmake-modules/xacro.cmake)
 
 SET(PROJECT_NAME "hpp_tiago")
 SET(PROJECT_DESCRIPTION "Additionnal files to use tiago in HPP")
-SET(PROJECT_URL "")
-SET(PROJECT_VERSION 0)
 
-SETUP_PROJECT()
+SETUP_HPP_PROJECT()
 
-FINDPYTHON(REQUIRED)
-FIND_PACKAGE(catkin REQUIRED COMPONENTS tiago_description)
+ADD_REQUIRED_DEPENDENCY(tiago_data)
+HPP_FINDPYTHON(REQUIRED)
 
-SET(TIAGO_DESCRIPTION_SHARE_DIR ${tiago_description_PREFIX}/share/tiago_description)
-FILE(RELATIVE_PATH TIAGO_DESCRIPTION_SHARE_REL_DIR ${CMAKE_CURRENT_BINARY_DIR} ${TIAGO_DESCRIPTION_SHARE_DIR})
-SET(INSTALL_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME})
-
-foreach(dir robots urdf srdf)
+foreach(dir urdf srdf)
     install(DIRECTORY ${dir}/
-      DESTINATION ${INSTALL_SHARE_DIR}/${dir})
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/${dir})
 endforeach(dir)
 
 INSTALL(DIRECTORY src/hpp DESTINATION ${PYTHON_SITELIB})
 
-# Generate URDFs
-#SET(TYPES iron steel)
-SET(TYPES steel)
+INSTALL(FILES package.xml DESTINATION
+  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
 
-MAKE_DIRECTORY(${CMAKE_BINARY_DIR}/robots)
-FOREACH(type ${TYPES})
-  GENERATE_URDF_FILE(${TIAGO_DESCRIPTION_SHARE_REL_DIR}/robots/tiago_${type}.urdf robots/tiago_${type} "urdf")
-  INSTALL(FILES
-    ${CMAKE_BINARY_DIR}/robots/tiago_${type}.urdf
-    DESTINATION ${INSTALL_SHARE_DIR}/urdf)
-ENDFOREACH(type ${TYPES})
-
-SET(XACRO_BASE "robots/tiago_airbus.urdf")
-SET(FIND_HPP_TIAGO_COMMAND ${CMAKE_SOURCE_DIR})
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/${XACRO_BASE}.xacro.in ${CMAKE_BINARY_DIR}/${XACRO_BASE}.xacro @ONLY)
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${CMAKE_BINARY_DIR}/${XACRO_BASE}
-  COMMAND ${_xacro_py}
-  ARGS --inorder -o ${CMAKE_BINARY_DIR}/${XACRO_BASE} ${CMAKE_BINARY_DIR}/${XACRO_BASE}.xacro additional_translation:=false
-  MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/${XACRO_BASE}.xacro
-  COMMENT "Generating URDF from ${XACRO_BASE}.xacro.in"
+# Make symbolic link to tiago_steel.urdf installed by tiago_data
+INSTALL(CODE "execute_process( \
+    COMMAND ${CMAKE_COMMAND} -E create_symlink \
+    ${TIAGO_DATA_PREFIX}/share/tiago_data/robots/tiago_steel.urdf \
+    ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/urdf/tiago_steel.urdf   \
+    )"
   )
-  LIST(APPEND ALL_GENERATED_URDF ${CMAKE_BINARY_DIR}/${XACRO_BASE})
 
-GENERATE_URDF_FILE(${CMAKE_SOURCE_DIR}/robots/tiago_airbus.urdf robots/tiago_airbus "urdf")
-
-# Generated reduced URDF
-ADD_CUSTOM_COMMAND (
-  OUTPUT ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf
-  COMMAND sed 's/continuous/fixed/'
-  ${CMAKE_BINARY_DIR}/robots/tiago_airbus.urdf >
-  ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf
-  MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/robots/tiago_airbus.urdf
-  COMMENT "Generating reduced URDF")
-
-ADD_CUSTOM_TARGET (generate_urdf_file ALL DEPENDS ${ALL_GENERATED_URDF}
-  ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf)
-
-INSTALL(FILES
-  ${CMAKE_BINARY_DIR}/robots/tiago_airbus.urdf
-  ${CMAKE_BINARY_DIR}/robots/tiago_airbus_reduced.urdf
-  DESTINATION ${INSTALL_SHARE_DIR}/urdf)
-
-INSTALL(FILES package.xml DESTINATION ${INSTALL_SHARE_DIR}/)
-
-SETUP_PROJECT_FINALIZE()
+SETUP_HPP_PROJECT_FINALIZE()

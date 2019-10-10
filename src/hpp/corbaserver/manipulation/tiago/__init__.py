@@ -1,1 +1,1 @@
-from hpp.corbaserver.manipulation.tiago.robot import Robot
+from .robot import Robot
